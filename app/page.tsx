@@ -3,6 +3,13 @@ import Link from "next/link";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
 
+const userSchema = z
+  .object({
+    id: z.number(),
+    email: z.string().email(),
+  })
+  .strict();
+
 const validationSchemaSignIn = z.object({
   email: z.string().email().min(1, { message: "Email is required" }),
   password: z.string().min(1, { message: "Password is required" }),
@@ -15,6 +22,25 @@ const defaultValuesSignIn: FormFieldsSignIn = {
   password: "",
 };
 
+async function signIn(data: { email: string; password: string }) {
+  const response = await fetch("http://localhost:4000/auth/signin", {
+    method: "POST",
+    body: JSON.stringify(data),
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+
+  const userJson = await response.json();
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch data");
+  }
+
+  const user = userSchema.parse(userJson);
+  return user;
+}
+
 export default function Home() {
   const { handleSubmit, register, reset } = useForm<FormFieldsSignIn>({
     defaultValues: defaultValuesSignIn,
@@ -22,7 +48,8 @@ export default function Home() {
   });
 
   const onSubmit: SubmitHandler<FormFieldsSignIn> = async (data) => {
-    console.log(data);
+    const user = await signIn(data);
+    console.log(user);
     reset();
   };
 

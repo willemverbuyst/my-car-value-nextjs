@@ -34,7 +34,7 @@ export default async function Users() {
         <div>
           <Link
             className="border border-slate-300 text-slate-300 px-2 py-1 rounded hover:bg-slate-700 focus-within:bg-slate-700 outline-none mx-2"
-            href="/users"
+            href="/"
           >
             home
           </Link>
