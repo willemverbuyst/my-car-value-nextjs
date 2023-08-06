@@ -71,9 +71,6 @@ export default async function Page() {
                 Price
               </th>
               <th scope="col" className="px-6 py-4">
-                Year
-              </th>
-              <th scope="col" className="px-6 py-4">
                 Mileage
               </th>
               <th scope="col" className="px-6 py-4">
@@ -89,7 +86,7 @@ export default async function Page() {
                   className="border-b dark:border-neutral-500"
                 >
                   <td className="whitespace-nowrap px-6 py-4 font-medium">
-                    {report.id}
+                    <Link href={`/reports/${report.id}`}>{report.id}</Link>
                   </td>
                   <td className="whitespace-nowrap px-6 py-4">{report.make}</td>
                   <td className="whitespace-nowrap px-6 py-4">
@@ -98,7 +95,6 @@ export default async function Page() {
                   <td className="whitespace-nowrap px-6 py-4">
                     {report.price}
                   </td>
-                  <td className="whitespace-nowrap px-6 py-4">{report.year}</td>
                   <td className="whitespace-nowrap px-6 py-4">
                     {report.mileage}
                   </td>
