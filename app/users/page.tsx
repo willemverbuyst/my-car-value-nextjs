@@ -24,7 +24,7 @@ async function getUsers() {
   return users;
 }
 
-export default async function Users() {
+export default async function Page() {
   const users = await getUsers();
 
   return (

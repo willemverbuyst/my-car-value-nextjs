@@ -31,7 +31,7 @@ async function getReports() {
   return reports;
 }
 
-export default async function Reports() {
+export default async function Page() {
   const reports = await getReports();
 
   return (
