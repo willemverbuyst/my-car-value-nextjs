@@ -1,27 +1,32 @@
 import Link from "next/link";
+import { z } from "zod";
 
-type Report = {
-  id: number;
-  make: string;
-  model: string;
-  price: number;
-  year: number;
-  lng: number;
-  lat: number;
-  mileage: number;
-  approved: boolean;
-};
+const report = z
+  .object({
+    id: z.number(),
+    make: z.string(),
+    model: z.string(),
+    price: z.number(),
+    year: z.number(),
+    lng: z.number(),
+    lat: z.number(),
+    mileage: z.number(),
+    approved: z.boolean(),
+  })
+  .strict();
 
 async function getReports() {
   const response = await fetch("http://localhost:4000/reports", {
     next: { revalidate: 1000 },
   });
 
-  const reports: Promise<Report[]> = await response.json();
+  const reportJson = await response.json();
 
   if (!response.ok) {
     throw new Error("Failed to fetch data");
   }
+
+  const reports = z.array(report).parse(reportJson);
 
   return reports;
 }
@@ -76,25 +81,36 @@ export default async function Reports() {
               </th>
             </tr>
           </thead>
-          <tbody>
-            {reports.map((report) => (
-              <tr key={report.id} className="border-b dark:border-neutral-500">
-                <td className="whitespace-nowrap px-6 py-4 font-medium">
-                  {report.id}
-                </td>
-                <td className="whitespace-nowrap px-6 py-4">{report.make}</td>
-                <td className="whitespace-nowrap px-6 py-4">{report.model}</td>
-                <td className="whitespace-nowrap px-6 py-4">{report.price}</td>
-                <td className="whitespace-nowrap px-6 py-4">{report.year}</td>
-                <td className="whitespace-nowrap px-6 py-4">
-                  {report.mileage}
-                </td>
-                <td className="whitespace-nowrap px-6 py-4">
-                  {report.approved ? "✅" : "❌"}
-                </td>
-              </tr>
-            ))}
-          </tbody>
+          {!!reports.length ? (
+            <tbody>
+              {reports.map((report) => (
+                <tr
+                  key={report.id}
+                  className="border-b dark:border-neutral-500"
+                >
+                  <td className="whitespace-nowrap px-6 py-4 font-medium">
+                    {report.id}
+                  </td>
+                  <td className="whitespace-nowrap px-6 py-4">{report.make}</td>
+                  <td className="whitespace-nowrap px-6 py-4">
+                    {report.model}
+                  </td>
+                  <td className="whitespace-nowrap px-6 py-4">
+                    {report.price}
+                  </td>
+                  <td className="whitespace-nowrap px-6 py-4">{report.year}</td>
+                  <td className="whitespace-nowrap px-6 py-4">
+                    {report.mileage}
+                  </td>
+                  <td className="whitespace-nowrap px-6 py-4">
+                    {report.approved ? "✅" : "❌"}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          ) : (
+            <p>no reports</p>
+          )}
         </table>
       </div>
     </>
